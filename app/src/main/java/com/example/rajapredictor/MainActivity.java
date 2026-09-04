@@ -16,18 +16,14 @@ public class MainActivity extends AppCompatActivity {
 
         webView = findViewById(R.id.webview);
         WebSettings webSettings = webView.getSettings();
-        
-        // Game ke liye JavaScript aur DOM storage zaroori hai
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
-        
         webView.setWebViewClient(new WebViewClient());
 
-        // Yahan apni live website ya GitHub Pages ka link daal dein
-        webView.loadUrl("https://sgodgaming2507-alt.github.io/Raja-Game-Predictor-Pro/");
+        // Ab yeh internet link ki jagah seedha app ke andar ki file load karega!
+        webView.loadUrl("file:///android_asset/index.html");
     }
 
-    // Agar user phone ka back button dabaye, toh app band hone ki jagah back page par jaye
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
