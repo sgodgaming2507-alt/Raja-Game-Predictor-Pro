@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color & Number Prediction Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #2d2d2d;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        .timer-box {
+            text-align: center;
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .timer {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff9800;
+        }
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-green { background-color: #4CAF50; }
+        .btn-violet { background-color: #9c27b0; }
+        .btn-red { background-color: #f44336; }
+        
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .num-btn {
+            padding: 12px;
+            background: #333;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .num-btn:hover { background: #555; }
+        
+        .result-box {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header / Wallet -->
+        <div class="header">
+            <span>Balance: ₹<span id="balance">1000</span></span>
+            <span>ID: #User01</span>
+        </div>
+
+        <!-- Timer Section -->
+        <div class="timer-box">
+            <div>Period Time Left</div>
+            <div class="timer" id="timer">00:30</div>
+        </div>
+
+        <!-- Color Betting Buttons -->
+        <div class="buttons-container">
+            <button class="btn btn-green" onclick="placeBet('Green')">Green</button>
+            <button class="btn btn-violet" onclick="placeBet('Violet')">Violet</button>
+            <button class="btn btn-red" onclick="placeBet('Red')">Red</button>
+        </div>
+
+        <!-- Number Betting Grid -->
+        <div class="number-grid" id="numberGrid">
+            <!-- Numbers 0 to 9 generated via JS or HTML -->
+        </div>
+
+        <!-- Result Display -->
+        <div class="result-box" id="resultBox">
+            <span>Bet lagayein, agla result yahan dikhega!</span>
+        </div>
+    </div>
+
+    <script>
+        let balance = 1000;
+        let timeLeft = 30;
+        let currentSelection = null;
+
+        // Number buttons dynamically generate karna
+        const numberGrid = document.getElementById('numberGrid');
+        for (let i = 0; i <= 9; i++) {
+            let btn = document.createElement('button');
+            btn.className = 'num-btn';
+            btn.innerText = i;
+            btn.onclick = () => placeBet(i);
+            numberGrid.appendChild(btn);
+        }
+
+        // Timer Logic
+        function startTimer() {
+            let timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    declareResult();
+                    timeLeft = 30;
+                    startTimer();
+                } else {
+                    let seconds = timeLeft < 10 ? '0' + timeLeft : timeLeft;
+                    document.getElementById('timer').innerText = `00:${seconds}`;
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        // User Bet Selection
+        function placeBet(option) {
+            currentSelection = option;
+            document.getElementById('resultBox').innerHTML = `Aapne select kiya: <b>${option}</b>. Result ka intezaar karein...`;
+        }
+
+        // Result Declaration Logic (Random Mock)
+        function declareResult() {
+            if (!currentSelection) {
+                document.getElementById('resultBox').innerHTML = `Time khatam! Aapne koi bet nahi lagayi thi.`;
+                return;
+            }
+
+            // Random number 0-9 generate karna
+            let winningNumber = Math.floor(Math.random() * 10);
+            let winningColor = winningNumber === 0 || winningNumber === 5 ? 'Violet' : (winningNumber % 2 === 0 ? 'Red' : 'Green');
+
+            let isWin = (currentSelection === winningNumber) || (currentSelection === winningColor);
+
+            if (isWin) {
+                balance += 90; // Jeetne par reward
+                document.getElementById('resultBox').innerHTML = `🎉 Jeet gaye! Number: ${winningNumber} (${winningColor}) aaya.`;
+            } else {
+                balance -= 10; // Harne par deduct
+                document.getElementById('resultBox').innerHTML = `❌ Haar gaye! Number: ${winningNumber} (${winningColor}) aaya.`;
+            }
+
+            document.getElementById('balance').innerText = balance;
+            currentSelection = null; // Reset selection for next round
+        }
+
+        // App start
+        startTimer();
+    </script>
+
+</body>
+</html>
